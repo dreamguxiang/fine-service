@@ -1,0 +1,35 @@
+
+.dynamics {
+    color: transparent;
+    background: -webkit-linear-gradient(30deg, #32c5ff 25%, #b620e0 50%, #f7b500 75%, #20e050 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: auto;
+    animation: Text 300s infinite linear;
+    -webkit-animation: Text 300s infinite linear;
+}
+
+@keyframes Text {
+    0% {
+        background-position: 0;
+    }
+    100% {
+        background-position: 28000px;
+    }
+}
+
+
+
+  #cat{
+    font: 20px Arial;
+    margin:-15px auto;
+    animation: mycat 5s infinite;
+    transform-origin: 50%;
+  }
+
+  @keyframes mycat
+  {
+    from {transform: rotate(360deg);}
+    to {transform: rotate(-360deg);}
+  }
