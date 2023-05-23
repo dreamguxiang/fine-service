@@ -1,5 +1,5 @@
 'use client'
-import { getSession,useSession, signOut } from "next-auth/react"
+import { useSession, signOut } from "next-auth/react"
 import { Navbar, Button, Link, Dropdown, Avatar, Text } from "@nextui-org/react";
 
 export default function LoginBtn() {
@@ -14,6 +14,9 @@ export default function LoginBtn() {
   if (session) {
     return (
       <>
+        <Text b>
+          {session?.user?.xboxname}
+        </Text>
         <Dropdown placement="bottom-right">
           <Navbar.Item>
             <Dropdown.Trigger>
@@ -22,7 +25,7 @@ export default function LoginBtn() {
                 as="button"
                 color="primary"
                 size="md"
-                src={session?.user?.image ?? undefined}
+                src={session?.user?.email ?? undefined}
               />
             </Dropdown.Trigger>
           </Navbar.Item>
@@ -47,7 +50,7 @@ export default function LoginBtn() {
             </Dropdown.Item>
 
             <Dropdown.Item key="logout" withDivider color="error">
-               登出
+              登出
             </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>

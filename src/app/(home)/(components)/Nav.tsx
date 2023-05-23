@@ -31,7 +31,6 @@ const MoonIcon = () => {
 export default function App() {
   const { setTheme } = useNextTheme();
   const { isDark } = useTheme();
-  const [selected, setSelected] = React.useState(new Set(["text"]));
 
   return (
     <Navbar isBordered variant="floating">
@@ -43,7 +42,6 @@ export default function App() {
           color="secondary"
           disallowEmptySelection
           selectionMode="single"
-          selectedKeys={selected}
           >
           <Dropdown.Item key="home">
             <Link href="/"> Home </Link>
