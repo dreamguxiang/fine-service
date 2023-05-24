@@ -1,9 +1,8 @@
 'use client'
-import { useServerInsertedHTML } from 'next/navigation'
-import { CssBaseline } from '@nextui-org/react'
 import { NextUIProvider } from '@nextui-org/react'
 import { SessionProvider } from "next-auth/react";
 import { useSSR } from '@nextui-org/react'
+
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const { isBrowser } = useSSR()
@@ -14,9 +13,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <SessionProvider>
-      <NextUIProvider>
-        {children}
-      </NextUIProvider>
+        <NextUIProvider>
+          {children}
+        </NextUIProvider>
     </SessionProvider>
   );
 }

@@ -50,7 +50,6 @@ const handler = NextAuth({
     },
 
     async session({ session, token, user }) {
-      // 登录成功后，更新Xbox信息
       if (token && token.access_token) {
         const userTokenResponse = await xbl.exchangeRpsTicketForUserToken(token.access_token as string, 'd');
         const XSTSTokenResponse = await xbl.exchangeTokenForXSTSToken(userTokenResponse.Token);

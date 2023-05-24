@@ -1,7 +1,9 @@
 'use client'
 import React from "react";
-import { Navbar, Link, Switch, useTheme, Dropdown } from "@nextui-org/react";
+import { Navbar, Switch, useTheme, Dropdown } from "@nextui-org/react";
+import Link from 'next/link';
 import { useTheme as useNextTheme } from "next-themes";
+import { useSelectedLayoutSegment } from "next/navigation";
 import LoginBtn from "./LoginBtn"
 import { FineLogo } from "./FineLogo"
 
@@ -31,18 +33,19 @@ const MoonIcon = () => {
 export default function App() {
   const { setTheme } = useNextTheme();
   const { isDark } = useTheme();
+  const segment = useSelectedLayoutSegment();
 
   return (
     <Navbar isBordered variant="floating">
       <Dropdown>
         <Dropdown.Trigger>
-          <Navbar.Toggle showIn="xs" />
+          <Navbar.Toggle showIn="xs"/>
         </Dropdown.Trigger>
         <Dropdown.Menu aria-label="Single selection actions"
           color="secondary"
           disallowEmptySelection
           selectionMode="single"
-          >
+        >
           <Dropdown.Item key="home">
             <Link href="/"> Home </Link>
           </Dropdown.Item>
@@ -62,12 +65,26 @@ export default function App() {
       }}>
         <FineLogo />
       </Navbar.Brand>
-      <Navbar.Content enableCursorHighlight
-        hideIn="xs"
-        variant="highlight">
-        <Navbar.Link href="/">Home</Navbar.Link>
-        <Navbar.Link href="/">AI</Navbar.Link>
-        <Navbar.Link href="chat">ChatGPT</Navbar.Link>
+      <Navbar.Content
+        hideIn="xs">
+        <Navbar.Item isActive={segment === "(main)"}>
+          <Link style={{ color: "inherit" }} href="/">
+            Home
+          </Link>
+        </Navbar.Item>
+        
+        <Navbar.Item isActive={segment === "ai"}>
+          <Link style={{ color: "inherit" }} href="/ai">
+            AI
+          </Link>
+        </Navbar.Item>
+
+        <Navbar.Item isActive={segment === "chat"}>
+          <Link style={{ color: "inherit" }} href="/chat">
+            ChatGPT
+          </Link>
+        </Navbar.Item>
+
       </Navbar.Content>
       <Navbar.Content css={{
         "@xs": {

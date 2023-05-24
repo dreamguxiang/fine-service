@@ -2,6 +2,7 @@ import Nav from "./(components)/Nav";
 import "./globals.css";
 import Providers from "./(components)/Providers"
 
+
 export default function RootLayout({
     children,
   }: {
