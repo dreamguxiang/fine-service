@@ -1,22 +1,22 @@
 'use client'
-import Chat,{ChatProps} from "./Chat";
+import Chat, { ChatProps } from "./Chat";
+import type { ChatCompletionRequestMessage } from 'openai';
 
 export interface ChatData {
-    avatar: string;
-    message: string;
-    isUser: boolean;
+  avatar: string;
+  messageData: ChatCompletionRequestMessage
 }
 
 interface ChatsProps {
-    chats: Map<string, ChatData>;
+  chats: ChatData[];
 }
-  
+
 export const Chats: React.FC<ChatsProps> = ({ chats }) => {
-    return (
-      <div>
-        {Array.from(chats.entries()).map(([sender, data]) => (
-          <Chat avatar={data.avatar} message={data.message} isUser={data.isUser} />
-        ))}
-      </div>
-    );
-  };
+  return (
+    <div>
+      {Array.from(chats.entries()).map(([sender, data]) => (
+        <Chat avatar={data.avatar} messageData={data.messageData} />
+      ))}
+    </div>
+  );
+};

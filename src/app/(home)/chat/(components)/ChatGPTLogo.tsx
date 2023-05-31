@@ -1,12 +1,12 @@
 'use client'
-import {Avatar} from "@nextui-org/react"
+import { Avatar } from "@nextui-org/react"
 
 interface ChatGPTLogoProps {
-    style?: React.CSSProperties;
-  }
+  style?: React.CSSProperties;
+}
 
 export const ChatGPTLogo: React.FC<ChatGPTLogoProps> = ({ style }) => (
-    <Avatar style={style} zoomed src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAKACAYAAAAMzckjAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
+  <Avatar style={style} zoomed src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAKACAYAAAAMzckjAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
     AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAABmJLR0QA/wD/AP+gvaeTAACA
     AElEQVR42uz9dZRj55k2el97SyqVVMzMzNRFDW5mMnY84TixM85MJs7EceY951uz+j1nnfOeCWfy
     JhnHsYMTaGMzMxR1MTMzo0olae/vj3Z3DE1VJenZe+v+rTUr44bSpd1V0q1nP899cyDkMX3jyC9c

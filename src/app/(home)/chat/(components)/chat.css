@@ -33,3 +33,24 @@
     from {transform: rotate(360deg);}
     to {transform: rotate(-360deg);}
   }
+
+  .chat-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    justify-content: flex-start;
+  }
+  
+  .avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .message-box {
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 10px;
+    flex: 1;
+  }
