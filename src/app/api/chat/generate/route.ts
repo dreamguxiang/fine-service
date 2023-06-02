@@ -45,5 +45,5 @@ export async function POST(req: Request) {
     }
   });
 
-  return NextResponse.json(JSON.stringify(ChatCompletionRequestMessageArray));
+  return NextResponse.json(chatCompletion.data.choices[0].message);
 }

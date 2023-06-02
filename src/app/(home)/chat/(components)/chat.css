@@ -1,56 +1,38 @@
-
-.dynamics {
-    color: transparent;
-    background: -webkit-linear-gradient(30deg, #32c5ff 25%, #b620e0 50%, #f7b500 75%, #20e050 100%);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-size: auto;
-    animation: Text 300s infinite linear;
-    -webkit-animation: Text 300s infinite linear;
+.ChatApp,
+.MessageContainer,
+.Navbar,
+.Message .Bubble,
+.QuickReplies,
+.ChatFooter {
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.ChatApp {
+  background-color: #ffffff;
+}
+.Navbar {
+  background-color: #ffffff;
+}
+.Message.left .Bubble {
+  background-color: #f3f3f3;
+}
+.Message.right .Bubble {
+  background-color: #dcffc9;
+}
+.QuickReplies,
+.ChatFooter {
+  background-color: #ffffff;
 }
 
-@keyframes Text {
-    0% {
-        background-position: 0;
-    }
-    100% {
-        background-position: 28000px;
-    }
+.Input{
+    outline-style: none ;
+    border: 1px solid #ccc; 
 }
 
-
-
-  #cat{
-    font: 20px Arial;
-    margin:-15px auto;
-    animation: mycat 5s infinite;
-    transform-origin: 50%;
+.Input:focus {
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3);
   }
 
-  @keyframes mycat
-  {
-    from {transform: rotate(360deg);}
-    to {transform: rotate(-360deg);}
-  }
-
-  .chat-container {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-    justify-content: flex-start;
-  }
-  
-  .avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    margin-right: 10px;
-  }
-  
-  .message-box {
-    background-color: #f0f0f0;
-    padding: 10px;
-    border-radius: 10px;
-    flex: 1;
-  }
+.Composer{
+    border-top-style: 1px solid #ccc; 
+}

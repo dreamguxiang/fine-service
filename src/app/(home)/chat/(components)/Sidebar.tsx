@@ -1,21 +1,28 @@
 'use client'
-import { Card, Text, Grid, Textarea, Button, Spacer, Loading, Modal, Radio } from "@nextui-org/react";
-import { Chats, ChatData } from "./Chats"
+
 import { useSession } from "next-auth/react"
 import { useRouter } from 'next/navigation';
-import { useRef, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import React from "react";
-import "./chat.css"
-import type { ChatCompletionRequestMessage } from 'openai';
 
+import type { ChatCompletionRequestMessage } from 'openai';
+import { Button, Modal, Text, Card, Grid, Radio, Spacer, Textarea, Loading } from "@nextui-org/react";
+import Chat, { Bubble, useMessages } from '@chatui/core';
+import ChatGPTLogo from './ChatGPTLogo'
+
+import '@chatui/core/dist/index.css';
+import "./chat.css"
+
+import ReactMarkdown from 'react-markdown';
+import 'github-markdown-css/github-markdown.css'
+import hljs from 'highlight.js';
+import 'highlight.js/styles/default.css';
 
 export default function Sidebar() {
     const { data: session, status } = useSession()
     const [LoginNum, setLoginNum] = useState(3);
 
     const router = useRouter();
-
-    const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     const [visible, setVisible] = useState(false);
     const handler = () => setVisible(true);
@@ -26,7 +33,17 @@ export default function Sidebar() {
     const [checked, setChecked] = useState('gpt-3.5');
     const [chatId, setChatId] = useState('NULL');
 
-    const [message, setMessage] = useState<ChatData[]>();
+    const { messages, appendMsg, deleteMsg, setTyping, resetList } = useMessages();
+
+    React.useEffect(()=>{
+        document.querySelectorAll("pre code").forEach((block: HTMLElement) => {
+            try {
+                hljs.highlightBlock(block);
+            } catch (e) {
+                console.log(e);
+            }
+        });
+    });
 
     useEffect(() => {
         if (status === "unauthenticated" && !session) {
@@ -49,19 +66,21 @@ export default function Sidebar() {
             const res = await fetch("/api/chat/getlatest", {
                 method: "GET"
             });
-            console.log(res);
             if (res.ok) {
+                resetList();
                 const { message, chatid } = await res.json();
+                if (!message) {
+                    return;
+                }
                 const msgs = JSON.parse(message) as ChatCompletionRequestMessage[];
-                const result: ChatData[] = [];
                 for (let data of msgs) {
-                    console.log(data);
-                    result.push({
-                        avatar: "",
-                        messageData: data
+                    appendMsg({
+                        type: 'text',
+                        content: { text: data.content },
+                        position: data.role === "user" ? 'right' : 'left',
+                        user: { avatar: data.role === "user" ? "" : ChatGPTLogo() },
                     });
                 }
-                setMessage(result);
                 setChatId(chatid);
             }
         }
@@ -71,61 +90,8 @@ export default function Sidebar() {
         }
     }, [isfirstPost]);
 
-    
-    const handleClickSend = async () => {
-        if (!textareaRef?.current?.value) {
-            return
-        }
-        let inputstr = "";
-        if (textareaRef.current) {
-            inputstr = textareaRef.current.value as string;
-            textareaRef.current.value = "";
-        }
-
-        const message2 = [...(message ?? [])];
-
-        message2?.push({
-            avatar: "",
-            messageData: {
-                content: inputstr,
-                role: "user",
-            }
-        }, {
-            avatar: "",
-            messageData: {
-                content: "正在思考中...",
-                role: "assistant",
-            },
-        })
-
-        setMessage(message2);
-
-        const res = await fetch("/api/chat/generate", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                prompt: inputstr,
-                chatid: chatId,
-            }),
-        });
-        if (res.ok) {
-            const msg = await res.json();
-            const msgs = JSON.parse(msg) as ChatCompletionRequestMessage[];
-            const result: ChatData[] = [];
-            msgs.map((msg) => {
-                result.push({
-                    avatar: "",
-                    messageData: msg
-                }
-                );
-            })
-            setMessage(result);
-        }
-    };
-
     const handleClickCreate = async () => {
+        setVisible(false);
         const res = await fetch("/api/chat/create", {
             method: "POST",
             headers: {
@@ -139,10 +105,65 @@ export default function Sidebar() {
         if (res.ok) {
             const { chatid } = await res.json();
             setChatId(chatid);
+            resetList();
         }
-        setVisible(false);
 
     };
+
+
+    ////
+
+    async function handleSend(type : string, val: string) {
+        if (type === 'text' && val.trim()) {
+            appendMsg({
+                type: 'text',
+                content: { text: val },
+                position: 'right',
+            });
+            setTyping(true);
+            const res = await fetch("/api/chat/generate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    prompt: val,
+                    chatid: chatId,
+                }),
+            });
+
+            if (res.ok) {
+                const result = await res.json();
+                appendMsg({
+                    type: 'text',
+                    content: { text: result.content },
+                    position: result.role === "user" ? 'right' : 'left',
+                    user: { avatar: result.role === "user" ? "ChatGPTLogo()" : ChatGPTLogo() },
+                });
+            }
+        }
+    }
+
+    function renderMessageContent(msg : any) {
+        const { type, content } = msg;
+
+        switch (type) {
+            case 'text':
+                return (
+                    <Bubble type="text">
+                           <ReactMarkdown>{content.text}</ReactMarkdown>
+                    </Bubble>
+                );
+            case 'image':
+                return (
+                    <Bubble type="image">
+                        <img src={content.picUrl} alt="" />
+                    </Bubble>
+                );
+            default:
+                return null;
+        }
+    }
 
     return (
         <>
@@ -170,8 +191,8 @@ export default function Sidebar() {
             </Modal>
             {session ? (
                 <Grid.Container gap={3.5}>
-                    <Grid xs direction={"column"}>
-                        <Card variant="shadow" css={{ mw: `280px` }} >
+                    <Grid>
+                        <Card variant="shadow" css={{ mw: `220px` }} >
                             <Card.Body>
                                 <Text
                                     h5
@@ -183,7 +204,7 @@ export default function Sidebar() {
                             </Card.Body>
                         </Card>
                         <Spacer y={1} />
-                        <Card variant="shadow" css={{ mw: `280px`, minHeight: `70vh` }}>
+                        <Card variant="shadow" css={{ mw: `220px`, height: `70vh` }}>
                             <Card.Header>
                                 <Grid.Container justify="center">
                                     <Grid>
@@ -195,33 +216,24 @@ export default function Sidebar() {
                             </Card.Header>
                             <Card.Body>
 
+                                <Text h4 color="secondary">ADSSSSSSSSSSSSSSSSS</Text>
+                                <Text h4 color="secondary">ADSSSSSSSSSSSSSSSSS</Text>
+                                <Text h4 color="secondary">ADSSSSSSSSSSSSSSSSS</Text>
+
                             </Card.Body>
                         </Card>
                     </Grid>
-                    <Grid xs={9.5}>
-                        <Card >
-                            <Card.Body>
-                                {message && message.length > 0 ? (
-                                    <Chats chats={message as ChatData[]}></Chats>
-                                ) : (
-                                    <Text h3 color="secondary">暂时没有任何对话</Text>
-                                )}
 
+                    <Grid xs>
+                        <Card css={{ height: `80vh` }}>
+                            <Card.Body>
+                                <Chat
+                                    navbar={{ title: '当前会话：' + chatId }}
+                                    messages={messages}
+                                    renderMessageContent={renderMessageContent}
+                                    onSend={handleSend}
+                                />
                             </Card.Body>
-                            <Card.Divider />
-                            <Card.Footer>
-                                <Grid.Container>
-                                    <Grid xs={10}>
-                                        <Textarea ref={textareaRef} aria-label="search" fullWidth size={"lg"} placeholder="请输入" rows={3} />
-                                    </Grid>
-                                    <Spacer y={1} />
-                                    <Grid xs={1} alignItems={"center"}>
-                                        <Button color="gradient" auto onClick={handleClickSend}>
-                                            提交
-                                        </Button>
-                                    </Grid>
-                                </Grid.Container>
-                            </Card.Footer>
                         </Card>
                     </Grid>
                 </Grid.Container>
